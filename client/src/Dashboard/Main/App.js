@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import './App.css';
 import {Route} from 'react-router-dom'
 
 class App extends Component{
@@ -16,14 +15,14 @@ class App extends Component{
   render(){
   return (
     <div className="App">
-      <Header/>
-      <Sidebar/>
+      {/* <Header/>
+      <Sidebar/> /*}
       {/* Routes will go here */}
-      <div>
+      {/* <div>
         <Route exact path='/main/tasks'
         render={<Tasks {...props} state={this.state}/>}/>
       </div>
-      <Footer/>
+      <Footer/> */}
     </div>
   );}
 }
