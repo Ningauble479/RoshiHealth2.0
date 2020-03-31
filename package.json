@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Ningauble479/RoshiHealth2.0#readme",
   "dependencies": {
     "concurrently": "^5.1.0",
+    "mongoose": "^5.9.7",
     "nodemon": "^2.0.2"
   }
 }

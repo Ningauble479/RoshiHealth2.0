@@ -21,29 +21,21 @@ app.use(express.json());
 const port = process.env.PORT || 8080;
 
 //Defining our database connection. Which should be in a .env file or as a server variable
-
-
-// const dbRoute = process.env.DB_ROUTE
+const dbRoute = process.env.DB_ROUTE
 
 //Database connection
-
-
-// mongoose.connect(dbRoute, {
-//     useCreateIndex: true,
-//     useNewUrlParser: true,
-//     useFindAndModify: false
-// });
+mongoose.connect(dbRoute, {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useFindAndModify: false
+});
 
 //defining db connection
-
-
-// let DB = mongoose.connection;
+let DB = mongoose.connection;
 
 //Starting the db server
-
-
-// DB.once('open', () => console.log('connected to the database'));
-// DB.on('error', console.error.bind(console, 'MongoDB connection error:'));
+DB.once('open', () => console.log('connected to the database'));
+DB.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
     //Starting the actual server
     app.listen(port, function() {
