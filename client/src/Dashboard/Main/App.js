@@ -3,6 +3,7 @@ import {Route} from 'react-router-dom'
 import GetUsers from './ShowUsers'
 import AddUser from './testMutation'
 import UpdateUser from './updateUser'
+import Login from './login'
 import { gql } from 'apollo-boost';
 
 const SHOW_USERS = gql`
@@ -23,7 +24,8 @@ class App extends Component{
   return (
     <div className="App">
       <GetUsers SHOW_USERS={SHOW_USERS}/>
-      <AddUser SHOW_USERS={SHOW_USERS}/>
+      <AddUser/>
+      <Login/>
       <UpdateUser/>
       {/* <Header/>
       <Sidebar/> /*}

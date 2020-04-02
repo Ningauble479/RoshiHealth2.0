@@ -1,22 +1,44 @@
 // Imports. These are our import packages //
 const express = require("express");
+var session = require("express-session");
 const dotenv = require('dotenv')
 const mongoose = require('mongoose')
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, AuthenticationError } = require('apollo-server-express');
 const typeDefs = require('./models/TypeDefsGQL.js')
 const resolvers = require('./models/ResolversGQL.js')
-const routes = require('./Routes')
+const bcrypt = require('bcrypt')
+const passport = require('./passport')
 const { User } = require('./models/mongooseModels');
+const cors = require('cors')
 
 import { createServer } from 'http';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { execute, subscribe } from 'graphql';
 
+const SECRET_KEY = 'Keyboard_Cat'
 
 const WS_PORT = 5000;
 
+const context = ({ req }) => {
+  // get the user token from the headers
+  console.log(req.user)
+  try{
+  if(req.user === true){
+
+  }} catch{
+    throw new AuthenticationError(
+
+      `Authentication token ${token} is invalid, please log in`,
+  )}
+    
+}
+
 //Defining the Apollo Server Instance
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ typeDefs, resolvers, context });
+
+
+
+
 
 const websocketServer = createServer((request, response) => {
   response.writeHead(404);
@@ -31,6 +53,14 @@ dotenv.config()
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors())
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Headers', 'Content-type,Authorization');
+  next();
+  });
+  app.use(session({ secret: SECRET_KEY, resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Applying express to Apollo
 server.applyMiddleware({ app });
@@ -94,44 +124,26 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-function findUser(email){
-  User.find(
-    {'email': email},
-    (err, data)=>{
-      if(err){console.log(err)}
-      else{console.log(data)}
+
+
+//Creating Account Logic
+app.post('/createAccount', (req,res)=>{
+  console.log('were creatin an account')
+
+    let data = new User();
+    let password = req.body.password
+    console.log(password)
+    data.password = password
+    data.email = req.body.email
+    data.userName = req.body.userName
+    data.save((err) => {
+      if (err) return res.json({ success: false, error: err });
+      return res.json({ success: true });
     })
-}
+})
 
 
 //Login Logic
-app.post('/get-token', async (req, res) => {
-  const { email, password } = req.body
-  const user = findUser(email)
-  if (user === true) {
-  //we use bcrypt to compare the hash in the database (mock.js) to the password the user provides
-      const match = await bcrypt.compare(password, user.password)
-      if (match) {
-          //we create the JWT for the user with our secret
-          //inside the token we encrypt some user data
-          //then we send the token to the user
-          const token = jwt.sign({ email: user.email, id: user.id }, SECRET_KEY)
-          res.send({
-              success: true,
-              token: token,
-          })
-      } else {
-          //return error to user to let them know the password is incorrect
-          res.status(401).send({
-              success: false,
-              message: 'Incorrect credentials',
-          })
-      }
-  } else {
-      //return error to user to let them know the account there are using does not exists
-      res.status(404).send({
-          success: false,
-          message: `Could not find account: ${email}`,
-      })
-  }
+app.post('/login', passport.authenticate('local'), (req, res) => {
+  res.send(req.user)
 })

@@ -2,8 +2,8 @@ const { User } = require('./mongooseModels');
 const { PubSub } = require('apollo-server');
 
 //bcrypt stuff
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+
+
 
 const USER_ADDED = 'USER_ADDED';
 
@@ -17,18 +17,10 @@ const resolvers = {
         },
       },
     Query: {
-        getUsers: async () => await User.find({}).exec()
+        getUsers: async () => await User.find({}).exec(),
+
     },
     Mutation: {
-        addUser: async (_, args) => {
-            try {
-                pubsub.publish(USER_ADDED, { userAdded: args });
-                let response = await User.create(args);
-                return response;
-            } catch(e) {
-                return e.message;
-            }
-        },
         updateUser: async (_, args) => {
             try {
                 let response = await User.findOneAndUpdate(
