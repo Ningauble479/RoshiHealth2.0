@@ -1,20 +1,30 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom'
+import GetUsers from './ShowUsers'
+import AddUser from './testMutation'
+import UpdateUser from './updateUser'
+import { gql } from 'apollo-boost';
+
+const SHOW_USERS = gql`
+  {
+    getUsers {
+        id
+        userName
+        email
+      }
+  }
+`;
+
+
 
 class App extends Component{
-  constructor(props) {
-    super(props);
-    this.state={
-      email: null,
-      userPic: null
-    }
-  }
-  
-
 
   render(){
   return (
     <div className="App">
+      <GetUsers SHOW_USERS={SHOW_USERS}/>
+      <AddUser SHOW_USERS={SHOW_USERS}/>
+      <UpdateUser/>
       {/* <Header/>
       <Sidebar/> /*}
       {/* Routes will go here */}
