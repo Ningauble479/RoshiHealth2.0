@@ -26,11 +26,13 @@
     "esm": "^3.2.25",
     "express-session": "^1.17.0",
     "graphql": "^14.6.0",
+    "graphql-passport": "^0.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.7",
     "nodemon": "^2.0.2",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "pubsub": "^3.2.1"
+    "pubsub": "^3.2.1",
+    "uuid": "^7.0.3"
   }
 }

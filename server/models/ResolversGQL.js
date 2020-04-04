@@ -1,4 +1,4 @@
-const { User } = require('./mongooseModels');
+const User = require('./mongooseModels');
 const { PubSub } = require('apollo-server');
 
 //bcrypt stuff
@@ -7,17 +7,11 @@ const { PubSub } = require('apollo-server');
 
 const USER_ADDED = 'USER_ADDED';
 
-const pubsub = new PubSub();
 
 const resolvers = {
-    Subscription: {
-        userAdded: {
-          // Additional event labels can be passed to asyncIterator creation
-          subscribe: () => pubsub.asyncIterator([USER_ADDED]),
-        },
-      },
     Query: {
         getUsers: async () => await User.find({}).exec(),
+        currentUser: (parent, args, context) => context.req.user,
 
     },
     Mutation: {
@@ -37,7 +31,36 @@ const resolvers = {
             } catch (e) {
                 return e.message
             }
-        }
+        },
+        login: async (parent, { email, password }, context) => {
+            const { user } = await context.authenticate('graphql-local', { email, password });
+ 
+            console.log(context.login)
+            context.login(user);
+            return  {user}
+        },
+        signup: async (parent, {userName, email, password }, context) => {
+          console.log({email: email})
+          const userExists = await User.findOne({'email': email}, (err, data)=>{return data});
+          console.log(userExists)
+          let newUser = new User()
+          if (userExists != null) {
+            throw new Error('User with email already exists');
+          }
+    
+          newUser.userName = userName
+          newUser.email = email
+          newUser.password = password
+          
+          newUser.save((err)=>{
+              if(err) return err
+          })
+
+          await context.login(newUser);
+
+          return { user: newUser };
+
+        },
     },
 
 };
