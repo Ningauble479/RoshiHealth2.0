@@ -1,19 +1,29 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import {gql} from 'apollo-boost'
+import {useMutation} from '@apollo/react-hooks'
 
+
+
+const LOGIN = gql`
+mutation Login($email: String!, $password: String!){
+  login(email: $email, password: $password){
+    user {
+      _id
+      userName
+      email
+    }
+  }
+}
+`;
 
 export default (props)=>{
     
-
+    const [login] = useMutation(LOGIN)
     let [email, changeEmail] = useState(null)
     let [password, changePassword] = useState(null)
 
-    function Login(){
-      axios.post('http://localhost:3000/login',{
-        password: password,
-        email: email
-      })
-    }
+
 
     return (
         <div>
@@ -21,7 +31,7 @@ export default (props)=>{
           <form
             onSubmit={e => {
               e.preventDefault();
-              Login()
+              login({ variables: { email: email, password: password } })
               changeEmail('');
               changePassword('');
             }}

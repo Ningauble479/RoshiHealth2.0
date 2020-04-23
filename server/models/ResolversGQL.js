@@ -3,15 +3,22 @@ const { PubSub } = require('apollo-server');
 
 //bcrypt stuff
 
-
-
 const USER_ADDED = 'USER_ADDED';
-
 
 const resolvers = {
     Query: {
-        getUsers: async () => await User.find({}).exec(),
-        currentUser: (parent, args, context) => context.req.user,
+        getUsers: async (parent, args, context) => {
+            if(!context.req.user){
+                console.log('wgat')
+                return null
+            }
+            let data = await User.find().exec()
+            return data
+        },
+        currentUser: (parent, args, context) => {
+            let data = context.req.user
+            return data
+        },
 
     },
     Mutation: {
@@ -25,7 +32,6 @@ const resolvers = {
                         return {success: true, Data: data}
 
                     }
-
                     );
                 return response;
             } catch (e) {

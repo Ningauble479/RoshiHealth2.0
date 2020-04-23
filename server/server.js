@@ -10,7 +10,7 @@ const resolvers = require('./models/ResolversGQL.js')
 const bcrypt = require('bcrypt')
 import initPassport from './passport'
 import User from './models/mongooseModels'
-import { GraphQLLocalStrategy, buildContext } from 'graphql-passport';
+import { buildContext } from 'graphql-passport';
 import uuid from 'uuid/v4';
 const cors = require('cors')
 
@@ -63,7 +63,7 @@ app.use(cors(corsOptions));
 // app.use('/api', routes);
 
 // Defining Port. Process.env for pre defined ports. ex. Azure
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3333;
 
 //Defining our database connection. Which should be in a .env file or as a server variable
 const dbRoute = process.env.DB_ROUTE
@@ -101,7 +101,7 @@ server.applyMiddleware({ app, cors: false });
 
 
     //Starting the actual server
-    app.listen({port: port}, () => {
+    app.listen(port, () => {
       console.log(`App listening on PORT ${port} and Apollo on http://localhost:3000${server.graphqlPath} `);
     });
 
